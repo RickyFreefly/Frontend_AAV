@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Factura{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <h1>Factura #{{ factura.idfactura }}</h1>
+  <a href="{{ url_for('facturas.listar_facturas') }}">⬅️ Volver</a>
+
+  <ul class="detalle-factura">
+    <li><strong>Cliente:</strong> {{ factura.idcliente }}</li>
+    <li><strong>Total:</strong> ${{ factura.total }}</li>
+    <li><strong>Estado:</strong> {{ factura.estado }}</li>
+    <li><strong>Observaciones:</strong> {{ factura.observaciones }}</li>
+    <li><strong>Siigo #:</strong> {{ factura.siigo_number or '—' }}</li>
+    {% if factura.public_url %}
+      <li><a href="{{ factura.public_url }}" target="_blank">📄 Ver PDF en Siigo</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}

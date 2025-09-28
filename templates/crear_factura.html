@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Factura{% endblock %}
+
+{% block content %}
+<div class="form-container dark-card">
+  <h2>🧾 Crear Factura</h2>
+  <a href="{{ url_for('facturas.listar_facturas') }}" class="back-link">⬅️ Volver</a>
+
+  <form method="post" action="{{ url_for('facturas.crear_factura') }}" class="styled-form">
+
+    <!-- Datos principales -->
+    <h3 class="form-section-title">📌 Datos Generales</h3>
+    <div class="form-grid">
+      <input type="number" name="idcliente" placeholder="Cliente (ID)" required>
+      <input type="number" name="idusuario" placeholder="Usuario (ID)" required>
+    </div>
+    <textarea name="observaciones" placeholder="Observaciones..."></textarea>
+
+    <!-- Detalles -->
+    <h3 class="form-section-title">🛒 Detalles de la Factura</h3>
+    <div id="detalles" class="dynamic-list">
+      <div class="detalle-row form-grid">
+        <input type="number" name="detalles[0][idproducto]" placeholder="ID Producto" required>
+        <input type="number" name="detalles[0][cantidad]" placeholder="Cantidad" required>
+        <input type="number" step="0.01" name="detalles[0][valorunitario]" placeholder="Valor Unitario" required>
+      </div>
+    </div>
+    <button type="button" class="btn-secondary" onclick="addDetalle()">➕ Agregar Detalle</button>
+
+    <!-- Pagos -->
+    <h3 class="form-section-title">💳 Pagos</h3>
+    <div id="pagos" class="dynamic-list">
+      <div class="pago-row form-grid">
+        <input type="number" name="pagos[0][idmedio]" placeholder="ID Medio de Pago" required>
+        <input type="number" step="0.01" name="pagos[0][valor]" placeholder="Valor Pago" required>
+        <input type="date" name="pagos[0][due_date]" required>
+      </div>
+    </div>
+    <button type="button" class="btn-secondary" onclick="addPago()">➕ Agregar Pago</button>
+
+    <!-- Botón guardar -->
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">💾 Guardar Factura</button>
+    </div>
+  </form>
+</div>
+
+<script>
+let detalleIndex = 1;
+function addDetalle() {
+  const div = document.createElement('div');
+  div.classList.add("detalle-row", "form-grid");
+  div.innerHTML = `
+    <input type="number" name="detalles[${detalleIndex}][idproducto]" placeholder="ID Producto" required>
+    <input type="number" name="detalles[${detalleIndex}][cantidad]" placeholder="Cantidad" required>
+    <input type="number" step="0.01" name="detalles[${detalleIndex}][valorunitario]" placeholder="Valor Unitario" required>
+  `;
+  document.getElementById("detalles").appendChild(div);
+  detalleIndex++;
+}
+
+let pagoIndex = 1;
+function addPago() {
+  const div = document.createElement('div');
+  div.classList.add("pago-row", "form-grid");
+  div.innerHTML = `
+    <input type="number" name="pagos[${pagoIndex}][idmedio]" placeholder="ID Medio de Pago" required>
+    <input type="number" step="0.01" name="pagos[${pagoIndex}][valor]" placeholder="Valor Pago" required>
+    <input type="date" name="pagos[${pagoIndex}][due_date]" required>
+  `;
+  document.getElementById("pagos").appendChild(div);
+  pagoIndex++;
+}
+</script>
+{% endblock %}

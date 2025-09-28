@@ -1,0 +1,258 @@
+/* ======== TARJETAS (cards) ======== */
+.form-card,
+.filter-card {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.form-card h3,
+.filter-card h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ======== FORMULARIOS ======== */
+.reserva-form .form-row,
+.filter-form .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.reserva-form input,
+.reserva-form select,
+.filter-form input[type="date"] {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: #fff;
+  min-width: 180px;
+}
+
+.reserva-form input:focus,
+.reserva-form select:focus,
+.filter-form input[type="date"]:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+}
+
+/* ======== BOTONES ======== */
+button,
+.btn-success,
+.btn-info,
+.btn-secondary {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.btn-success {
+  background: #4caf50;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #43a047;
+}
+
+.btn-info {
+  background: #2196f3;
+  color: #fff;
+}
+
+.btn-info:hover {
+  background: #1976d2;
+}
+
+.btn-secondary {
+  background: #666;
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* ======== TABLA ======== */
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px;
+  background: #1c1c1c;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.styled-table thead tr {
+  background: #1565c0;
+  color: #fff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #333;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #333;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background: #2a2a2a;
+}
+
+.styled-table tbody tr:hover {
+  background: #333;
+}
+
+/* ======== BADGES (Estados) ======== */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.badge-yellow {
+  background: #ffeb3b;
+  color: #333;
+}
+
+.badge-green {
+  background: #4caf50;
+  color: #fff;
+}
+
+.badge-red {
+  background: #f44336;
+  color: #fff;
+}
+
+/* ======== TITULOS ======== */
+.page-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #90caf9;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+
+.sugerencias-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1e1e1e;   /* oscuro */
+  color: #fff;           /* texto blanco */
+  border: 1px solid #444;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sugerencias-list li {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.sugerencias-list li:hover {
+  background: #333;
+}
+
+  .cliente-msg {
+    display: block;
+    font-size: 0.9em;
+    margin-top: 4px;
+  }
+  .cliente-msg.ok {
+    color: #28a745;
+  }
+  .cliente-msg.error {
+    color: #dc3545;
+  }
+  .sugerencias-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1000;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sugerencias-list li {
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  .sugerencias-list li:hover {
+    background: #f0f0f0;
+  }
+
+  /* Contenedor de sugerencias */
+.sugerencias-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;        /* Fondo blanco */
+  border: 1px solid #ccc;  /* Borde gris */
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Elementos de la lista */
+.sugerencias-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #000;             /* Texto negro */
+  font-size: 14px;
+}
+
+/* Hover para resaltar opción */
+.sugerencias-list li:hover {
+  background: #f0f0f0;     /* Gris claro al pasar el mouse */
+}

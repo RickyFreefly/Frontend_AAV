@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Cliente{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <h1 class="page-title">✏️ Editar Cliente</h1>
+  <a href="{{ url_for('clientes.listar_clientes') }}" class="back-link">⬅️ Volver</a>
+
+  <div class="card">
+    <form method="post" action="{{ url_for('clientes.actualizar_cliente', idCliente=cliente.idcliente) }}" class="cliente-form">
+      <div class="form-grid">
+        <label>Tipo</label>
+        <select name="tipo" required>
+          <option value="NATURAL" {% if cliente.tipo_local == "NATURAL" %}selected{% endif %}>Natural</option>
+          <option value="JURIDICA" {% if cliente.tipo_local == "JURIDICA" %}selected{% endif %}>Jurídica</option>
+        </select>
+
+        <label>Tipo Documento</label>
+        <input type="text" name="id_type" value="{{ cliente.id_type }}" required>
+
+        <label>Nombres</label>
+        <input type="text" name="nombres" value="{{ cliente.nombres or '' }}">
+
+        <label>Apellidos</label>
+        <input type="text" name="apellidos" value="{{ cliente.apellidos or '' }}">
+
+        <label>Razón Social</label>
+        <input type="text" name="razonSocial" value="{{ cliente.razonsocial or '' }}">
+
+        <label>Dirección</label>
+        <input type="text" name="direccion" value="{{ cliente.direccion or '' }}">
+
+        <label>Código Departamento</label>
+        <input type="text" name="state_code" value="{{ cliente.state_code or '' }}">
+
+        <label>Código Ciudad</label>
+        <input type="text" name="city_code" value="{{ cliente.city_code or '' }}">
+
+        <label>Teléfono</label>
+        <input type="text" name="telefono" value="{{ cliente.telefono or '' }}">
+
+        <label>Nombre Contacto</label>
+        <input type="text" name="contact_first_name" value="{{ cliente.contact_first_name or '' }}">
+
+        <label>Apellido Contacto</label>
+        <input type="text" name="contact_last_name" value="{{ cliente.contact_last_name or '' }}">
+
+        <label>Email Contacto</label>
+        <input type="email" name="contact_email" value="{{ cliente.contact_email or '' }}">
+
+        <label>Observaciones</label>
+        <textarea name="observacion">{{ cliente.observacion or '' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">💾 Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

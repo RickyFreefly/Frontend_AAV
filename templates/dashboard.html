@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  
+  <!-- Logo centrado -->
+  <div class="logo-dashboard">
+    <img src="{{ url_for('static', filename='img/LOGO-VERTICALSMALL.png') }}" 
+         alt="Logo Empresa" class="logo-header">
+  </div>
+
+  <h1>Bienvenido, {{ username }}</h1>
+  <p class="subtitle">Selecciona una opción para continuar</p>
+
+  <div class="dashboard-grid">
+    <a href="{{ url_for('clientes.listar_clientes') }}" class="card">
+      <i class="fas fa-users"></i>
+      <span>Clientes</span>
+    </a>
+
+    <a href="{{ url_for('reservas.listar_reservas') }}" class="card">
+      <i class="fas fa-calendar-check"></i>
+      <span>Reservas</span>
+    </a>
+
+    <a href="{{ url_for('facturas.listar_facturas') }}" class="card">
+      <i class="fas fa-file-invoice-dollar"></i>
+      <span>Facturas</span>
+    </a>
+
+    <a href="{{ url_for('egresos.listar_egresos') }}" class="card">
+      <i class="fas fa-money-bill-wave"></i>
+      <span>Egresos</span>
+    </a>
+  </div>
+
+  <div class="logout">
+    <a href="{{ url_for('auth.logout') }}">🚪 Cerrar sesión</a>
+  </div>
+</div>
+{% endblock %}

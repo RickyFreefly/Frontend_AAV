@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Facturas{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <h1>Gestión de Facturas</h1>
+  <a href="{{ url_for('dashboard.index') }}">⬅️ Volver</a>
+
+  <!-- Botón nueva factura -->
+  <a href="{{ url_for('facturas.crear_factura') }}" class="btn-primary">➕ Nueva Factura</a>
+
+  <!-- Listado -->
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Siigo #</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in facturas %}
+      <tr>
+        <td>{{ f.idfactura }}</td>
+        <td>{{ f.idcliente }}</td>
+        <td>${{ f.total }}</td>
+        <td>{{ f.estado }}</td>
+        <td>{{ f.siigo_number or '—' }}</td>
+        <td>
+          <a href="{{ url_for('facturas.detalle_factura', id=f.idfactura) }}">🔍 Ver</a>
+          {% if f.public_url %}
+            <a href="{{ f.public_url }}" target="_blank">📄 PDF</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

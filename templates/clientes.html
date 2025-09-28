@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <h1 class="page-title">📋 Gestión de Clientes</h1>
+  <a href="{{ url_for('dashboard.index') }}" class="back-link">⬅️ Volver</a>
+
+  <!-- Formulario Crear Cliente -->
+  <div class="card">
+    <h2>➕ Crear Cliente</h2>
+    <form method="post" action="{{ url_for('clientes.crear_cliente') }}" class="cliente-form" id="clienteForm">
+
+      <!-- Campo oculto que enviará el código 13 o 31 -->
+      <input type="hidden" name="id_type" id="id_type">
+
+      <!-- Fila: Tipo de Cliente -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tipo de Cliente</label>
+          <select name="tipo" id="tipo" onchange="ajustarFormulario()" required>
+            <option value="NATURAL">Natural</option>
+            <option value="JURIDICA">Jurídica</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Fila: Identificación -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tipo de Identificación</label>
+          <input type="text" id="tipo_identificacion" class="readonly" value="CC" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>Número de Identificación</label>
+          <div class="input-with-dv">
+            <input type="text" name="identificacion" required>
+            <span class="dv-field juridica" style="display:none;">
+              -
+              <input type="text" name="check_digit" maxlength="2" pattern="[0-9]{1,2}" title="Máximo 2 dígitos">
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NATURAL -->
+      <div class="natural">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombres</label>
+            <input type="text" name="nombres">
+          </div>
+          <div class="form-group">
+            <label>Apellidos</label>
+            <input type="text" name="apellidos">
+          </div>
+        </div>
+      </div>
+
+      <!-- JURIDICA -->
+      <div class="juridica" style="display:none;">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Razón Social</label>
+            <input type="text" name="razonSocial">
+          </div>
+        </div>
+      </div>
+
+      <!-- Comunes -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Dirección</label>
+          <input type="text" name="direccion">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" name="telefono">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input type="email" name="contact_email" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label>Observaciones</label>
+          <textarea name="observacion" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <button type="submit" class="btn-primary">💾 Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Buscador -->
+  <div class="card">
+    <h2>🔎 Buscar Cliente</h2>
+    <form method="get" action="{{ url_for('clientes.listar_clientes') }}">
+      <div class="form-row">
+        <input type="text" name="identificacion" placeholder="Ingrese identificación..." required>
+        <button type="submit" class="btn-primary">Buscar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Listado de Clientes -->
+  <div class="card">
+    <h2>📑 Listado de Clientes</h2>
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tipo</th>
+          <th>Identificación</th>
+          <th>Nombre / Razón Social</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in clientes %}
+        <tr>
+          <td>{{ c.idcliente }}</td>
+          <td>{{ c.tipo_local }}</td>
+          <td>
+            {% if c.tipo_local == "JURIDICA" %}
+              NIT {{ c.identificacion }}{% if c.check_digit %}-{{ c.check_digit }}{% endif %}
+            {% else %}
+              CC {{ c.identificacion }}
+            {% endif %}
+          </td>
+          <td>
+            {% if c.tipo_local == "JURIDICA" %}
+              {{ c.razonsocial }}
+            {% else %}
+              {{ c.nombres }} {{ c.apellidos }}
+            {% endif %}
+          </td>
+          <td>{{ c.direccion or '-' }}</td>
+          <td>{{ c.telefono or '-' }}</td>
+          <td>{{ c.contact_email or '-' }}</td>
+          <td>
+            <a href="{{ url_for('clientes.editar_cliente_form', idCliente=c.idcliente) }}" class="btn-action">✏️ Editar</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" class="empty">⚠️ No hay clientes registrados</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Script para mostrar/ocultar campos -->
+<script>
+function ajustarFormulario() {
+  const tipo = document.getElementById("tipo").value;
+  const naturalFields = document.querySelectorAll(".natural");
+  const juridicaFields = document.querySelectorAll(".juridica");
+  const idType = document.getElementById("id_type");
+  const tipoIdentificacion = document.getElementById("tipo_identificacion");
+  const dvField = document.querySelectorAll(".dv-field");
+
+  if (tipo === "NATURAL") {
+    idType.value = "13"; // CC
+    tipoIdentificacion.value = "CC";
+    naturalFields.forEach(f => f.style.display = "block");
+    juridicaFields.forEach(f => f.style.display = "none");
+    dvField.forEach(f => f.style.display = "none");
+  } else {
+    idType.value = "31"; // NIT
+    tipoIdentificacion.value = "NIT";
+    naturalFields.forEach(f => f.style.display = "none");
+    juridicaFields.forEach(f => f.style.display = "block");
+    dvField.forEach(f => f.style.display = "flex");
+  }
+}
+
+// Ejecutar al cargar
+document.addEventListener("DOMContentLoaded", ajustarFormulario);
+</script>
+
+
+{% endblock %}
