@@ -1,3 +1,6 @@
 Flask-WTF==1.2.1        # Formularios con validaciones
 email-validator==2.2.0  # Validación de correos
 bcrypt==4.2.0           # Si quisieras hashear en el frontend también
+
+requests
+gunicorn

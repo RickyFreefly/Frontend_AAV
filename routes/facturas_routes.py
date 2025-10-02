@@ -4,7 +4,7 @@ import config
 
 facturas_bp = Blueprint("facturas", __name__)
 
-# ================== LISTAR FACTURAS ==================
+# ================== LISTAR FACTURAS (con filtros y paginación) ==================
 @facturas_bp.route("/facturas")
 def listar_facturas():
     if "token" not in session:
@@ -13,11 +13,42 @@ def listar_facturas():
 
     try:
         headers = {"Authorization": f"Bearer {session['token']}"}
-        response = requests.get(f"{config.API_URL}/facturas", headers=headers)
+
+        # 🔎 Parámetros desde querystring
+        cliente = request.args.get("cliente", "")
+        estado = request.args.get("estado", "")
+        page = int(request.args.get("page", 1))      # aseguramos enteros
+        per_page = int(request.args.get("per_page", 10))
+
+        params = {
+            "cliente": cliente,
+            "estado": estado,
+            "page": page,
+            "per_page": per_page,
+        }
+
+        response = requests.get(f"{config.API_URL}/facturas", headers=headers, params=params)
 
         if response.status_code == 200:
-            facturas = response.json()
-            return render_template("facturas.html", facturas=facturas)
+            data = response.json()
+            facturas = data.get("facturas", [])
+            page = int(data.get("page", 1))
+            total_pages = int(data.get("total_pages", 1))
+
+            # 🔧 Convertir total a float para evitar error de formateo en Jinja
+            for f in facturas:
+                try:
+                    f["total"] = float(f.get("total", 0))
+                except (ValueError, TypeError):
+                    f["total"] = 0.0
+
+            return render_template(
+                "facturas.html",
+                facturas=facturas,
+                page=page,
+                total_pages=total_pages,
+                request=request  # 👉 para que HTML recuerde filtros en los inputs
+            )
         else:
             flash("Error al obtener facturas ❌", "danger")
             return redirect(url_for("dashboard.index"))
@@ -36,7 +67,7 @@ def crear_factura():
     if request.method == "POST":
         data = {
             "idcliente": request.form.get("idcliente"),
-            "idusuario": session.get("idusuario", 1),  # ⚠️ Mejor usar el idusuario real de la sesión
+            "idusuario": session.get("idusuario", 1),
             "observaciones": request.form.get("observaciones"),
             "detalles": [],
             "pagos": []
@@ -84,10 +115,8 @@ def crear_factura():
                 "siigo_pago_id": p.get("siigo_pago_id")
             })
 
-        # Si la factura viene desde una reserva
         idreserva = request.form.get("idreserva")
 
-        # Llamada al backend Node
         try:
             headers = {
                 "Authorization": f"Bearer {session['token']}",
@@ -98,7 +127,6 @@ def crear_factura():
             if response.status_code in [200, 201]:
                 flash("✅ Factura creada correctamente", "success")
 
-                # Si la factura viene de una reserva -> actualizar estado
                 if idreserva:
                     patch_resp = requests.patch(
                         f"{config.API_URL}/reservas/{idreserva}/facturar",
@@ -107,7 +135,7 @@ def crear_factura():
                     if patch_resp.status_code == 200:
                         flash("✅ Reserva asociada marcada como FACTURADA", "info")
                     else:
-                        flash("⚠️ La factura se creó pero no se pudo actualizar la reserva", "warning")
+                        flash("⚠️ Factura creada pero no se actualizó la reserva", "warning")
 
                 return redirect(url_for("facturas.listar_facturas"))
             else:
@@ -152,10 +180,7 @@ def proxy_buscar_cliente():
 
     try:
         resp = requests.get(f"{config.API_URL}/clientes", headers=headers, params={"identificacion": identificacion})
-        if resp.status_code == 200:
-            return jsonify(resp.json())
-        else:
-            return jsonify([]), 404
+        return jsonify(resp.json()) if resp.status_code == 200 else (jsonify([]), 404)
     except Exception as e:
         print("❌ Error en proxy clientes:", e)
         return jsonify({"error": "Backend no disponible"}), 500
@@ -169,10 +194,7 @@ def proxy_productos():
     headers = {"Authorization": f"Bearer {session['token']}"}
     try:
         resp = requests.get(f"{config.API_URL}/productos", headers=headers)
-        if resp.status_code == 200:
-            return jsonify(resp.json())
-        else:
-            return jsonify([]), 404
+        return jsonify(resp.json()) if resp.status_code == 200 else (jsonify([]), 404)
     except Exception as e:
         print("❌ Error en proxy productos:", e)
         return jsonify({"error": "Backend no disponible"}), 500
@@ -186,10 +208,7 @@ def proxy_medios():
     headers = {"Authorization": f"Bearer {session['token']}"}
     try:
         resp = requests.get(f"{config.API_URL}/medios", headers=headers)
-        if resp.status_code == 200:
-            return jsonify(resp.json())
-        else:
-            return jsonify([]), 404
+        return jsonify(resp.json()) if resp.status_code == 200 else (jsonify([]), 404)
     except Exception as e:
         print("❌ Error en proxy medios:", e)
         return jsonify({"error": "Backend no disponible"}), 500

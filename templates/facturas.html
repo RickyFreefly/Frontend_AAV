@@ -3,42 +3,75 @@
 {% block title %}Facturas{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-  <h1>Gestión de Facturas</h1>
-  <a href="{{ url_for('dashboard.index') }}">⬅️ Volver</a>
+<div class="dashboard-container facturas-page">
+  <div class="header-actions">
+    <h1>📑 Gestión de Facturas</h1>
+    <div class="actions">
+      <a href="{{ url_for('dashboard.index') }}" class="btn-secondary">⬅️ Volver</a>
+      <a href="{{ url_for('facturas.crear_factura') }}" class="btn-primary">➕ Nueva Factura</a>
+    </div>
+  </div>
 
-  <!-- Botón nueva factura -->
-  <a href="{{ url_for('facturas.crear_factura') }}" class="btn-primary">➕ Nueva Factura</a>
+  <!-- 🔎 Filtros -->
+  <form method="get" action="{{ url_for('facturas.listar_facturas') }}" class="filter-form">
+    <input type="text" name="cliente" placeholder="Buscar por cliente" value="{{ request.args.get('cliente','') }}">
+    <select name="estado">
+      <option value="">Todos</option>
+      <option value="PENDIENTE" {% if request.args.get('estado') == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
+      <option value="PAGADO" {% if request.args.get('estado') == 'PAGADO' %}selected{% endif %}>Pagado</option>
+      <option value="CANCELADO" {% if request.args.get('estado') == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
+    </select>
+    <button type="submit" class="btn-primary">🔍 Buscar</button>
+  </form>
 
-  <!-- Listado -->
-  <table class="styled-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Cliente</th>
-        <th>Total</th>
-        <th>Estado</th>
-        <th>Siigo #</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for f in facturas %}
-      <tr>
-        <td>{{ f.idfactura }}</td>
-        <td>{{ f.idcliente }}</td>
-        <td>${{ f.total }}</td>
-        <td>{{ f.estado }}</td>
-        <td>{{ f.siigo_number or '—' }}</td>
-        <td>
-          <a href="{{ url_for('facturas.detalle_factura', id=f.idfactura) }}">🔍 Ver</a>
-          {% if f.public_url %}
-            <a href="{{ f.public_url }}" target="_blank">📄 PDF</a>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- 📋 Listado -->
+  <div class="table-wrapper">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Siigo #</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in facturas %}
+        <tr>
+          <td data-label="ID">{{ f.idfactura }}</td>
+          <td data-label="Cliente">{{ f.nombre_cliente }}</td>
+          <td data-label="Total">${{ "{:,.2f}".format(f.total) }}</td>
+          <td data-label="Estado">
+            <span class="badge {{ f.estado | lower }}">
+              {{ f.estado }}
+            </span>
+          </td>
+          <td data-label="Siigo #">{{ f.siigo or '—' }}</td>
+          <td data-label="Acciones">
+            <a href="{{ url_for('facturas.detalle_factura', id=f.idfactura) }}" class="btn-link">🔍 Ver</a>
+            {% if f.public_url %}
+              <a href="{{ f.public_url }}" target="_blank" class="btn-link">📄 PDF</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 📑 Paginación -->
+  <div class="pagination">
+    {% if page > 1 %}
+      <a href="{{ url_for('facturas.listar_facturas', page=page-1, cliente=request.args.get('cliente'), estado=request.args.get('estado')) }}" class="page-btn">⬅️ Anterior</a>
+    {% endif %}
+
+    <span>Página {{ page }} de {{ total_pages }}</span>
+
+    {% if page < total_pages %}
+      <a href="{{ url_for('facturas.listar_facturas', page=page+1, cliente=request.args.get('cliente'), estado=request.args.get('estado')) }}" class="page-btn">Siguiente ➡️</a>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

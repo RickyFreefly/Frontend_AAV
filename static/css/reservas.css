@@ -1,18 +1,18 @@
 /* ======== TARJETAS (cards) ======== */
 .form-card,
 .filter-card {
-  background: #1e1e1e;
+  background: #ffffff;             /* blanco */
   padding: 20px;
   border-radius: 12px;
   margin: 20px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .form-card h3,
 .filter-card h3 {
   margin-bottom: 15px;
   font-size: 18px;
-  color: #fff;
+  color: #333;                     /* texto oscuro */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -32,18 +32,19 @@
 .filter-form input[type="date"] {
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid #444;
-  background: #2a2a2a;
-  color: #fff;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #333;
   min-width: 180px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
 .reserva-form input:focus,
 .reserva-form select:focus,
 .filter-form input[type="date"]:focus {
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
 }
 
 /* ======== BOTONES ======== */
@@ -60,31 +61,31 @@ button,
 }
 
 .btn-success {
-  background: #4caf50;
+  background: #28a745;
   color: #fff;
 }
 
 .btn-success:hover {
-  background: #43a047;
+  background: #218838;
 }
 
 .btn-info {
-  background: #2196f3;
+  background: #007bff;
   color: #fff;
 }
 
 .btn-info:hover {
-  background: #1976d2;
+  background: #0056b3;
 }
 
 .btn-secondary {
-  background: #666;
+  background: #6c757d;
   color: #fff;
   text-decoration: none;
 }
 
 .btn-secondary:hover {
-  background: #555;
+  background: #5a6268;
 }
 
 /* ======== TABLA ======== */
@@ -93,13 +94,14 @@ button,
   border-collapse: collapse;
   margin-top: 15px;
   font-size: 14px;
-  background: #1c1c1c;
+  background: #fff;
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .styled-table thead tr {
-  background: #1565c0;
+  background: #007bff;
   color: #fff;
   text-align: left;
   font-weight: bold;
@@ -108,19 +110,15 @@ button,
 .styled-table th,
 .styled-table td {
   padding: 12px 15px;
-  border-bottom: 1px solid #333;
-}
-
-.styled-table tbody tr {
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #ddd;
 }
 
 .styled-table tbody tr:nth-child(even) {
-  background: #2a2a2a;
+  background: #f9f9f9;
 }
 
 .styled-table tbody tr:hover {
-  background: #333;
+  background: #f1f5fb;
 }
 
 /* ======== BADGES (Estados) ======== */
@@ -134,17 +132,17 @@ button,
 }
 
 .badge-yellow {
-  background: #ffeb3b;
-  color: #333;
+  background: #ffc107;
+  color: #000;
 }
 
 .badge-green {
-  background: #4caf50;
+  background: #28a745;
   color: #fff;
 }
 
 .badge-red {
-  background: #f44336;
+  background: #dc3545;
   color: #fff;
 }
 
@@ -152,13 +150,13 @@ button,
 .page-title {
   font-size: 24px;
   margin-bottom: 10px;
-  color: #fff;
+  color: #333;
 }
 
 .back-link {
   display: inline-block;
   margin-bottom: 20px;
-  color: #90caf9;
+  color: #007bff;
   text-decoration: none;
 }
 
@@ -166,75 +164,14 @@ button,
   text-decoration: underline;
 }
 
-
+/* ======== SUGERENCIAS (autocomplete) ======== */
 .sugerencias-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background: #1e1e1e;   /* oscuro */
-  color: #fff;           /* texto blanco */
-  border: 1px solid #444;
-  border-radius: 4px;
-  max-height: 150px;
-  overflow-y: auto;
-  z-index: 1000;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.sugerencias-list li {
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.sugerencias-list li:hover {
-  background: #333;
-}
-
-  .cliente-msg {
-    display: block;
-    font-size: 0.9em;
-    margin-top: 4px;
-  }
-  .cliente-msg.ok {
-    color: #28a745;
-  }
-  .cliente-msg.error {
-    color: #dc3545;
-  }
-  .sugerencias-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    max-height: 150px;
-    overflow-y: auto;
-    z-index: 1000;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .sugerencias-list li {
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-  .sugerencias-list li:hover {
-    background: #f0f0f0;
-  }
-
-  /* Contenedor de sugerencias */
-.sugerencias-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #fff;        /* Fondo blanco */
-  border: 1px solid #ccc;  /* Borde gris */
+  background: #fff;
+  border: 1px solid #ccc;
   border-radius: 4px;
   max-height: 200px;
   overflow-y: auto;
@@ -244,15 +181,88 @@ button,
   list-style: none;
 }
 
-/* Elementos de la lista */
 .sugerencias-list li {
   padding: 8px 12px;
   cursor: pointer;
-  color: #000;             /* Texto negro */
+  color: #333;
   font-size: 14px;
 }
 
-/* Hover para resaltar opción */
 .sugerencias-list li:hover {
-  background: #f0f0f0;     /* Gris claro al pasar el mouse */
+  background: #f0f0f0;
+}
+
+/* Mensajes cliente */
+.cliente-msg {
+  display: block;
+  font-size: 0.9em;
+  margin-top: 4px;
+}
+.cliente-msg.ok {
+  color: #28a745;
+}
+.cliente-msg.error {
+  color: #dc3545;
+}
+
+/* ======== TOTALES FACTURA ======== */
+.totales-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.total-card {
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #fff; /* texto blanco por defecto */
+}
+
+.total-card h4 {
+  margin: 0 0 8px;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.total-card p {
+  margin: 0;
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #fff; /* forzamos el valor a blanco */
+}
+
+/* Colores por tipo */
+.azul {
+  background: #007bff;
+}
+.verde {
+  background: #28a745;
+}
+.rojo {
+  background: #dc3545;
+}
+
+/* Mensaje de saldo */
+.saldo-warning {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #dc3545;
+  text-align: center;
+}
+
+
+/* ======== Valores de Totales ======== */
+.total-card p {
+  display: block;         /* asegura que ocupe toda la línea */
+  font-size: 1.8rem;      /* más grande */
+  font-weight: bold;      
+  margin-top: 8px;
+  color: #fff;            /* texto blanco */
+}
+
+.total-card p {
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
 }
