@@ -6,6 +6,8 @@ from routes.egresos_routes import egresos_bp
 from routes.reservas_routes import reservas_bp
 from routes.clientes import clientes_bp
 from routes.facturas_routes import facturas_bp
+from routes.cierre import cierre_bp
+from routes.cierre_informe import informe_bp
 import config
 
 app = Flask(__name__)
@@ -19,6 +21,8 @@ app.register_blueprint(egresos_bp)
 app.register_blueprint(reservas_bp)
 app.register_blueprint(clientes_bp)
 app.register_blueprint(facturas_bp)
+app.register_blueprint(cierre_bp)
+app.register_blueprint(informe_bp)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

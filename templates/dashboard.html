@@ -1,43 +1,178 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 <div class="dashboard-container">
-  
-  <!-- Logo centrado -->
-  <div class="logo-dashboard">
+
+  <!-- Logo centrado en la parte superior -->
+  <div class="logo-top">
     <img src="{{ url_for('static', filename='img/LOGO-VERTICALSMALL.png') }}" 
          alt="Logo Empresa" class="logo-header">
   </div>
 
-  <h1>Bienvenido, {{ username }}</h1>
-  <p class="subtitle">Selecciona una opción para continuar</p>
+  <!-- Texto de bienvenida -->
+  <div class="welcome-text">
+    <h1>Bienvenido, <span>{{ username }}</span></h1>
+    <p>Selecciona una opción para continuar</p>
+  </div>
 
-  <div class="dashboard-grid">
+  <!-- Panel de accesos -->
+  <section class="dashboard-grid">
     <a href="{{ url_for('clientes.listar_clientes') }}" class="card">
-      <i class="fas fa-users"></i>
-      <span>Clientes</span>
+      <i class="fas fa-users icon"></i>
+      <h3>Clientes</h3>
+      <p>Gestión de información de clientes.</p>
     </a>
 
     <a href="{{ url_for('reservas.listar_reservas') }}" class="card">
-      <i class="fas fa-calendar-check"></i>
-      <span>Reservas</span>
+      <i class="fas fa-calendar-check icon"></i>
+      <h3>Reservas</h3>
+      <p>Control de reservas y disponibilidad.</p>
     </a>
 
     <a href="{{ url_for('facturas.listar_facturas') }}" class="card">
-      <i class="fas fa-file-invoice-dollar"></i>
-      <span>Facturas</span>
+      <i class="fas fa-file-invoice-dollar icon"></i>
+      <h3>Facturas</h3>
+      <p>Emisión y consulta de facturas.</p>
     </a>
 
     <a href="{{ url_for('egresos.listar_egresos') }}" class="card">
-      <i class="fas fa-money-bill-wave"></i>
-      <span>Egresos</span>
+      <i class="fas fa-money-bill-wave icon"></i>
+      <h3>Egresos</h3>
+      <p>Registro de gastos y pagos realizados.</p>
     </a>
-  </div>
 
-  <div class="logout">
+    <a href="{{ url_for('cierre.cierre_dia') }}" class="card highlight">
+      <i class="fas fa-calendar-day icon"></i>
+      <h3>Cierre Día</h3>
+      <p>Informe financiero del día actual.</p>
+    </a>
+
+    <!-- 🆕 Nueva tarjeta: Informe por Fechas -->
+    <a href="{{ url_for('informe.cierre_informe') }}" class="card highlight-secondary">
+      <i class="fas fa-chart-line icon"></i>
+      <h3>Informe por Fechas</h3>
+      <p>Consulta de ingresos, egresos y saldos por rango de fechas.</p>
+    </a>
+  </section>
+
+  <!-- Botón cerrar sesión -->
+  <footer class="logout">
     <a href="{{ url_for('auth.logout') }}">🚪 Cerrar sesión</a>
-  </div>
+  </footer>
 </div>
+
+<style>
+/* ====== LAYOUT GENERAL ====== */
+.dashboard-container {
+  padding: 40px 20px;
+  min-height: 100vh;
+  background-color: #f6f8fc;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ====== LOGO SUPERIOR ====== */
+.logo-top {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.logo-header {
+  width: 170px;
+}
+
+/* ====== TEXTO DE BIENVENIDA ====== */
+.welcome-text {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.welcome-text h1 {
+  font-size: 2.2em;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+.welcome-text span {
+  color: #007bff;
+}
+.welcome-text p {
+  color: #666;
+  font-size: 1.05em;
+}
+
+/* ====== GRID DE ACCESOS ====== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 25px;
+  max-width: 1000px;
+  width: 100%;
+}
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 25px 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  text-decoration: none;
+  color: #333;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+.icon {
+  font-size: 42px;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+.card h3 {
+  margin-bottom: 6px;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+.card p {
+  color: #777;
+  font-size: 0.9em;
+  line-height: 1.3em;
+}
+
+/* ====== TARJETAS DESTACADAS ====== */
+.highlight {
+  border-top: 4px solid #6f42c1;
+}
+.highlight .icon {
+  color: #6f42c1;
+}
+
+.highlight-secondary {
+  border-top: 4px solid #20c997;
+}
+.highlight-secondary .icon {
+  color: #20c997;
+}
+
+/* ====== BOTÓN SALIR ====== */
+.logout {
+  margin-top: 50px;
+}
+.logout a {
+  text-decoration: none;
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 1.05em;
+  transition: color 0.2s;
+}
+.logout a:hover {
+  color: #b02a37;
+}
+</style>
 {% endblock %}

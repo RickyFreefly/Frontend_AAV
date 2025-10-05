@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Informe de Cierre{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cierre_informe.css') }}">
+
+<div class="informe-container">
+
+  <!-- 🔹 Encabezado -->
+  <div class="header-card">
+    <h2>📊 Informe de Cierre</h2>
+    <p>Consulta los movimientos y totales por fecha o rango de fechas.</p>
+  </div>
+
+  <!-- 🔹 Formulario de búsqueda -->
+  <form method="POST" class="form-fechas">
+    <div class="form-group">
+      <label>Fecha única:</label>
+      <input type="date" name="fecha">
+    </div>
+
+    <div class="divider">— ó —</div>
+
+    <div class="form-group">
+      <label>Desde:</label>
+      <input type="date" name="inicio">
+    </div>
+    <div class="form-group">
+      <label>Hasta:</label>
+      <input type="date" name="fin">
+    </div>
+
+    <button type="submit" class="btn-consultar">🔍 Consultar</button>
+  </form>
+
+  {% if error %}
+    <div class="alert error">{{ error }}</div>
+  {% endif %}
+
+  {% if data %}
+  <div class="result-section">
+
+    <div class="fecha-cierre">
+      <h3>📅 Informe correspondiente a: <span>{{ data.fecha_cierre }}</span></h3>
+    </div>
+
+    <!-- Detalle -->
+    <div class="card-section">
+      <h4>📋 Detalle de Movimientos</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Cliente / Proveedor</th>
+            <th>Producto / Concepto</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in data.detalle %}
+          <tr class="{{ 'egreso' if m.tipo == 'EGRESO' else 'ingreso' }}">
+            <td>{{ m.tipo }}</td>
+            <td>{{ m.cliente or '-' }}</td>
+            <td>{{ m.producto or '-' }}</td>
+            <td>{{ m.estado or '-' }}</td>
+            <td>{{ m.fecha }}</td>
+            <td style="text-align:right;">${{ '{:,.0f}'.format(m.valor|float) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center">No se encontraron movimientos.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Totales -->
+    <div class="card-summary">
+      <h4>💰 Totales</h4>
+      <div class="summary-grid">
+        {% for t in data.totales %}
+        <div class="summary-item {{ t.tipo | lower | replace(' ', '-') }}">
+          <h5>{{ t.tipo }}</h5>
+          <p>{{ t.signo }}${{ '{:,.0f}'.format(t.total|float) }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+  {% endif %}
+
+  <div class="volver-container">
+    <a href="{{ url_for('dashboard.index') }}" class="btn-volver">⬅️ Volver al Dashboard</a>
+  </div>
+</div>
+{% endblock %}

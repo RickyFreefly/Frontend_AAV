@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Cierre Diario{% endblock %}
+
+{% block content %}
+<!-- ✅ Enlace al CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cierredia.css') }}">
+
+<div class="cierre-container">
+
+  <!-- Tarjeta de Fecha -->
+  <div class="card-header">
+    <div class="header-top">
+      <h2>📅 Fecha de Cierre: <span>{{ fecha_cierre }}</span></h2>
+      <!-- 🔙 Botón para volver al Dashboard -->
+      <a href="{{ url_for('dashboard.index') }}" class="btn-volver">
+        ⬅️ Volver al Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Tarjeta Detalle -->
+  <div class="card-section">
+    <h3>📋 Detalle de Movimientos</h3>
+    <div class="table-wrapper">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Cliente / Proveedor</th>
+            <th>Producto / Concepto</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in detalle %}
+          <tr class="{{ 'egreso' if m.tipo == 'EGRESO' else 'ingreso' }}">
+            <td>{{ m.tipo }}</td>
+            <td>{{ m.cliente }}</td>
+            <td>{{ m.producto if m.producto else '-' }}</td>
+            <td>{{ m.estado }}</td>
+            <td>{{ m.fecha }}</td>
+            <td style="text-align:right;">${{ '{:,.0f}'.format(m.valor|float) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center">No hay movimientos registrados hoy.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tarjeta Totales -->
+  <div class="card-summary">
+    <h3>💰 Totales del Día</h3>
+    <div class="summary-grid">
+      {% for t in totales %}
+      <div class="summary-item {{ t.tipo | lower | replace(' ', '-') }}">
+        <h4>{{ t.tipo }}</h4>
+        <p class="valor">
+          {{ t.signo }}${{ '{:,.0f}'.format(t.total|float) }}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

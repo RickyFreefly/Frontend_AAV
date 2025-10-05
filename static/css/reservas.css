@@ -266,3 +266,30 @@ button,
 .total-card p {
   text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
 }
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  gap: 15px;
+}
+
+.pagination a, .pagination span {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #f4f4f4;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.pagination a:hover {
+  background: #007bff;
+  color: white;
+}
+
+.pagination span {
+  background: #ddd;
+}

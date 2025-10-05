@@ -13,6 +13,8 @@ def listar_reservas():
 
     fecha_inicio = request.args.get("fecha_inicio")
     fecha_fin = request.args.get("fecha_fin")
+    page = int(request.args.get("page", 1))
+    per_page = 10  # 🔹 Número de registros por página
 
     reservas, medios, productos = [], [], []
 
@@ -29,6 +31,13 @@ def listar_reservas():
         if response.status_code == 200:
             reservas = response.json()
 
+        # 🔹 Paginación local
+        total = len(reservas)
+        start = (page - 1) * per_page
+        end = start + per_page
+        reservas_pag = reservas[start:end]
+        total_pages = (total + per_page - 1) // per_page
+
         # ✅ Medios de pago
         medios_resp = requests.get(f"{config.API_URL}/medios", headers=headers)
         if medios_resp.status_code == 200:
@@ -44,10 +53,12 @@ def listar_reservas():
 
     return render_template(
         "reservas.html",
-        reservas=reservas,
+        reservas=reservas_pag,
         medios=medios,
         productos=productos,
-        request=request
+        request=request,
+        page=page,
+        total_pages=total_pages,
     )
 
 

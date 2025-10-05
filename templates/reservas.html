@@ -121,6 +121,21 @@
       {% endif %}
     </tbody>
   </table>
+
+  <!-- 🔹 Paginación -->
+  {% if total_pages > 1 %}
+  <div class="pagination">
+    {% if page > 1 %}
+      <a href="{{ url_for('reservas.listar_reservas', page=page-1, fecha_inicio=request.args.get('fecha_inicio',''), fecha_fin=request.args.get('fecha_fin','')) }}" class="btn-secondary">⬅️ Anterior</a>
+    {% endif %}
+
+    <span>Página {{ page }} de {{ total_pages }}</span>
+
+    {% if page < total_pages %}
+      <a href="{{ url_for('reservas.listar_reservas', page=page+1, fecha_inicio=request.args.get('fecha_inicio',''), fecha_fin=request.args.get('fecha_fin','')) }}" class="btn-secondary">Siguiente ➡️</a>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
 
 <!-- Script para autocompletar -->
@@ -161,25 +176,26 @@
   });
 
   // Seleccionar cliente
-    sugerencias.addEventListener("click", function(e) {
-      if (e.target.closest("li")) {
-        const li = e.target.closest("li");
-        const id = li.getAttribute("data-id");
-        const nombre = li.getAttribute("data-nombre");
-        const identificacion = li.textContent.split(" - ")[0];
+  sugerencias.addEventListener("click", function(e) {
+    if (e.target.closest("li")) {
+      const li = e.target.closest("li");
+      const id = li.getAttribute("data-id");
+      const nombre = li.getAttribute("data-nombre");
+      const identificacion = li.textContent.split(" - ")[0];
 
-        hiddenIdCliente.value = id;
-        inputIdentificacion.value = `${identificacion} - ${nombre}`; // 👈 mostramos los dos
-        msg.textContent = "✅ Cliente seleccionado: " + nombre;
-        msg.className = "cliente-msg ok";
+      hiddenIdCliente.value = id;
+      inputIdentificacion.value = `${identificacion} - ${nombre}`;
+      msg.textContent = "✅ Cliente seleccionado: " + nombre;
+      msg.className = "cliente-msg ok";
 
-        sugerencias.innerHTML = "";
-      }
-    });
+      sugerencias.innerHTML = "";
+    }
+  });
 
   inputIdentificacion.addEventListener("blur", () => {
     setTimeout(() => { sugerencias.innerHTML = ""; }, 200);
   });
 </script>
+
 
 {% endblock %}

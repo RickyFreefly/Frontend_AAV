@@ -4,7 +4,7 @@ import config
 
 clientes_bp = Blueprint("clientes", __name__, url_prefix="/clientes")
 
-# =================== LISTAR CLIENTES ===================
+# =================== LISTAR CLIENTES (con paginación) ===================
 @clientes_bp.route("/")
 def listar_clientes():
     if "token" not in session:
@@ -12,32 +12,40 @@ def listar_clientes():
         return redirect(url_for("auth.login"))
 
     identificacion = request.args.get("identificacion")
+    page = int(request.args.get("page", 1))
+    per_page = 10  # número de registros por página
     clientes = []
 
     try:
         headers = {"Authorization": f"Bearer {session['token']}"}
         url = f"{config.API_URL}/clientes"
 
-        if identificacion:
-            response = requests.get(url, headers=headers, params={"identificacion": identificacion})
-            if response.status_code == 200:
-                clientes = response.json()
-                if not clientes:
-                    flash("⚠️ No se encontraron clientes con esa identificación", "warning")
-            else:
-                flash("❌ Error en búsqueda de cliente", "danger")
+        # 🔍 Filtrar por identificación si aplica
+        params = {"identificacion": identificacion} if identificacion else {}
+
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code == 200:
+            clientes = response.json()
+            if identificacion and not clientes:
+                flash("⚠️ No se encontraron clientes con esa identificación", "warning")
         else:
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                clientes = response.json()
-            else:
-                flash("❌ Error listando clientes", "danger")
+            flash("❌ Error obteniendo lista de clientes", "danger")
 
     except Exception as e:
         flash(f"Error conectando al backend: {e}", "danger")
 
-    return render_template("clientes.html", clientes=clientes)
+    # =================== Paginación local ===================
+    total = len(clientes)
+    total_pages = (total + per_page - 1) // per_page
+    offset = (page - 1) * per_page
+    clientes_paginados = clientes[offset:offset + per_page]
 
+    return render_template(
+        "clientes.html",
+        clientes=clientes_paginados,
+        page=page,
+        total_pages=total_pages,
+    )
 
 # =================== CREAR CLIENTE ===================
 @clientes_bp.route("/crear", methods=["POST"])
@@ -59,14 +67,15 @@ def crear_cliente():
         "state_code": request.form.get("state_code"),
         "city_code": request.form.get("city_code"),
         "telefono": request.form.get("telefono"),
-        "contact_first_name": request.form.get("contact_first_name"),
-        "contact_last_name": request.form.get("contact_last_name"),
         "contact_email": request.form.get("contact_email"),
         "observacion": request.form.get("observacion"),
     }
 
     try:
-        headers = {"Authorization": f"Bearer {session['token']}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {session['token']}",
+            "Content-Type": "application/json",
+        }
         r = requests.post(f"{config.API_URL}/clientes", headers=headers, json=data)
         if r.status_code == 201:
             flash("✅ Cliente creado con éxito", "success")
@@ -117,14 +126,15 @@ def actualizar_cliente(idCliente):
         "state_code": request.form.get("state_code"),
         "city_code": request.form.get("city_code"),
         "telefono": request.form.get("telefono"),
-        "contact_first_name": request.form.get("contact_first_name"),
-        "contact_last_name": request.form.get("contact_last_name"),
         "contact_email": request.form.get("contact_email"),
         "observacion": request.form.get("observacion"),
     }
 
     try:
-        headers = {"Authorization": f"Bearer {session['token']}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {session['token']}",
+            "Content-Type": "application/json",
+        }
         r = requests.put(f"{config.API_URL}/clientes/{idCliente}", headers=headers, json=data)
         if r.status_code == 200:
             flash("✅ Cliente actualizado con éxito", "success")
