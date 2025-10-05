@@ -138,7 +138,8 @@ async function cargarReserva() {
   if (!identificacion) return alert("Ingrese la identificación del cliente");
 
   try {
-    const resp = await fetch(`http://localhost:3000/api/reservas/cliente/${identificacion}`);
+    const resp = await fetch(`${API_URL}/api/reservas/cliente/${identificacion}`);
+    //const resp = await fetch(`http://localhost:3000/api/reservas/cliente/${identificacion}`);
     if (!resp.ok) throw new Error("Reserva no encontrada");
     const reservas = await resp.json();
     const reserva = reservas[0];
