@@ -53,6 +53,7 @@
             <th>Tipo</th>
             <th>Cliente / Proveedor</th>
             <th>Producto / Concepto</th>
+            <th>Medio de Pago</th> <!-- 🆕 Nueva columna -->
             <th>Estado</th>
             <th>Fecha</th>
             <th>Valor</th>
@@ -64,12 +65,13 @@
             <td>{{ m.tipo }}</td>
             <td>{{ m.cliente or '-' }}</td>
             <td>{{ m.producto or '-' }}</td>
+            <td>{{ m.medio_pago or 'N/A' }}</td> <!-- 🆕 Mostrar medio de pago -->
             <td>{{ m.estado or '-' }}</td>
             <td>{{ m.fecha }}</td>
             <td style="text-align:right;">${{ '{:,.0f}'.format(m.valor|float) }}</td>
           </tr>
           {% else %}
-          <tr><td colspan="6" class="text-center">No se encontraron movimientos.</td></tr>
+          <tr><td colspan="7" class="text-center">No se encontraron movimientos.</td></tr> <!-- 🆕 colspan ajustado -->
           {% endfor %}
         </tbody>
       </table>

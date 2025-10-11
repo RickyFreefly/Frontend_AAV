@@ -28,6 +28,7 @@
             <th>Tipo</th>
             <th>Cliente / Proveedor</th>
             <th>Producto / Concepto</th>
+            <th>Medio de Pago</th> <!-- 🆕 Nueva columna -->
             <th>Estado</th>
             <th>Fecha</th>
             <th>Valor</th>
@@ -39,12 +40,15 @@
             <td>{{ m.tipo }}</td>
             <td>{{ m.cliente }}</td>
             <td>{{ m.producto if m.producto else '-' }}</td>
+            <td>{{ m.medio_pago if m.medio_pago else 'N/A' }}</td> <!-- 🆕 Mostrar medio -->
             <td>{{ m.estado }}</td>
             <td>{{ m.fecha }}</td>
             <td style="text-align:right;">${{ '{:,.0f}'.format(m.valor|float) }}</td>
           </tr>
           {% else %}
-          <tr><td colspan="6" class="text-center">No hay movimientos registrados hoy.</td></tr>
+          <tr>
+            <td colspan="7" class="text-center">No hay movimientos registrados hoy.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>

@@ -1,73 +1,85 @@
 {% extends "base.html" %}
-
 {% block title %}Reservas{% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
-  <h1 class="page-title">Gestión de Reservas</h1>
-  <a href="{{ url_for('dashboard.index') }}" class="back-link">⬅️ Volver</a>
+  <h1 class="page-title">🪂 Gestión de Reservas</h1>
+  <a href="{{ url_for('dashboard.index') }}" class="btn-volver">⬅️ Volver</a>
 
-  <!-- Formulario estilo card -->
-  <div class="form-card">
-    <h3>➕ Nueva Reserva</h3>
+  <!-- ===================== FORMULARIO CREAR RESERVA ===================== -->
+  <div class="card">
+    <h2>➕ Nueva Reserva</h2>
     <form method="post" action="{{ url_for('reservas.crear_reserva') }}" class="reserva-form">
       <div class="form-row">
-        <!-- 👉 Autocompletado de clientes -->
+        <!-- 👉 Autocompletado o precarga del cliente -->
         <div class="form-group" style="position: relative; flex: 1;">
-          <input type="text" id="identificacion" name="identificacion" 
-                 placeholder="Identificación Cliente" autocomplete="off" required>
-          <input type="hidden" id="idcliente" name="idcliente">
+          <label>Cliente</label>
+          <input type="text" id="identificacion" name="identificacion" placeholder="Identificación o nombre..."
+                 value="{{ identificacion or (cliente.identificacion if cliente) or '' }}" autocomplete="off" required>
+          <input type="hidden" id="idcliente" name="idcliente" value="{{ idCliente or (cliente.idcliente if cliente) or '' }}">
           <span id="cliente-msg" class="cliente-msg"></span>
           <ul id="sugerencias" class="sugerencias-list"></ul>
         </div>
 
-        <select name="idproducto" id="producto-select" required onchange="setPrecio()">
-          <option value="">-- Selecciona producto --</option>
-          {% for p in productos %}
-            <option value="{{ p.idproducto }}" data-precio="{{ p.precio }}">{{ p.nombre }}</option>
-          {% endfor %}
-        </select>
+        <div class="form-group">
+          <label>Producto</label>
+          <select name="idproducto" id="producto-select" required onchange="setPrecio()">
+            <option value="">-- Selecciona producto --</option>
+            {% for p in productos %}
+              <option value="{{ p.idproducto }}" data-precio="{{ p.precio }}">{{ p.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-        <input type="number" step="0.01" id="valor" name="valor" placeholder="Valor Total" required>
+        <div class="form-group">
+          <label>Valor</label>
+          <input type="number" step="0.01" id="valor" name="valor" placeholder="Valor Total" required>
+        </div>
       </div>
 
       <div class="form-row">
-        <select name="idmedio" required>
-          <option value="">-- Selecciona medio de pago --</option>
-          {% for m in medios %}
-            <option value="{{ m.idmedio }}">{{ m.nombre }}</option>
-          {% endfor %}
-        </select>
+        <div class="form-group">
+          <label>Medio de Pago</label>
+          <select name="idmedio" required>
+            <option value="">-- Selecciona medio --</option>
+            {% for m in medios %}
+              <option value="{{ m.idmedio }}">{{ m.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-        <select name="estado" required>
-          <option value="RESERVADO">Reservado</option>
-          <option value="FACTURADO">Facturado</option>
-          <option value="CANCELADO">Cancelado</option>
-        </select>
+        <div class="form-group">
+          <label>Estado</label>
+          <select name="estado" required>
+            <option value="RESERVADO">Reservado</option>
+            <option value="FACTURADO">Facturado</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </div>
 
-        <button type="submit" class="btn-success">💾 Guardar</button>
+        <div class="form-group" style="align-self: end;">
+          <button type="submit" class="btn-primary">💾 Guardar</button>
+        </div>
       </div>
     </form>
   </div>
 
-  <hr>
-
-  <!-- 🔎 Formulario de búsqueda -->
-  <div class="filter-card">
-    <h3>📅 Buscar Reservas por Fecha</h3>
+  <!-- ===================== FILTRO DE BÚSQUEDA ===================== -->
+  <div class="card">
+    <h2>📅 Buscar Reservas por Fecha</h2>
     <form method="get" action="{{ url_for('reservas.listar_reservas') }}" class="filter-form">
       <div class="form-row">
         <div class="form-group">
-          <label for="fecha_inicio">Desde:</label>
+          <label>Desde</label>
           <input type="date" id="fecha_inicio" name="fecha_inicio"
                  value="{{ request.args.get('fecha_inicio','') }}">
         </div>
         <div class="form-group">
-          <label for="fecha_fin">Hasta:</label>
+          <label>Hasta</label>
           <input type="date" id="fecha_fin" name="fecha_fin"
                  value="{{ request.args.get('fecha_fin','') }}">
         </div>
-        <div class="form-actions">
+        <div class="form-group" style="align-self: end;">
           <button type="submit" class="btn-success">🔍 Buscar</button>
           <a href="{{ url_for('reservas.listar_reservas') }}" class="btn-secondary">❌ Limpiar</a>
         </div>
@@ -75,127 +87,189 @@
     </form>
   </div>
 
-  <hr>
+  <!-- ===================== LISTADO DE RESERVAS ===================== -->
+  <div class="card">
+    <h2>📋 Listado de Reservas</h2>
+    <div style="overflow-x:auto;">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>Valor</th>
+            <th>Medio</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if reservas %}
+            {% for r in reservas %}
+            <tr>
+              <td>{{ r.id }}</td>
+              <td>{{ r.fecha or '-' }}</td>
+              <td>{{ r.cliente or '-' }}</td>
+              <td>{{ r.producto or '-' }}</td>
+              <td>${{ "{:,.2f}".format(r.valor|float) }}</td>
+              <td>{{ r.medio or '-' }}</td>
+              <td>
+                {% if r.estado == "RESERVADO" %}
+                  <span class="badge badge-yellow">🕒 {{ r.estado }}</span>
+                {% elif r.estado == "FACTURADO" %}
+                  <span class="badge badge-green">💰 {{ r.estado }}</span>
+                {% elif r.estado == "CANCELADO" %}
+                  <span class="badge badge-red">❌ {{ r.estado }}</span>
+                {% else %}
+                  {{ r.estado }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7" class="empty">⚠️ No hay reservas registradas</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
 
-  <!-- Listado de reservas -->
-  <h2>📋 Listado de Reservas</h2>
-  <table class="styled-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Fecha</th>
-        <th>Cliente</th>
-        <th>Producto</th>
-        <th>Valor</th>
-        <th>Medio</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% if reservas %}
-        {% for r in reservas %}
-        <tr>
-          <td>{{ r.id }}</td>
-          <td>{{ r.fecha }}</td>
-          <td>{{ r.cliente }}</td>
-          <td>{{ r.producto }}</td>
-          <td>${{ "{:,.2f}".format(r.valor|float) }}</td>
-          <td>{{ r.medio }}</td>
-          <td>
-            {% if r.estado == "RESERVADO" %}
-              <span class="badge badge-yellow">🕒 {{ r.estado }}</span>
-            {% elif r.estado == "FACTURADO" %}
-              <span class="badge badge-green">💰 {{ r.estado }}</span>
-            {% elif r.estado == "CANCELADO" %}
-              <span class="badge badge-red">❌ {{ r.estado }}</span>
-            {% else %}
-              {{ r.estado }}
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td colspan="7" style="text-align: center;">No hay reservas registradas</td>
-        </tr>
+    <!-- PAGINACIÓN -->
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% if page > 1 %}
+      <a href="{{ url_for('reservas.listar_reservas', page=page-1, fecha_inicio=request.args.get('fecha_inicio',''), fecha_fin=request.args.get('fecha_fin','')) }}" class="page-link">⬅️ Anterior</a>
       {% endif %}
-    </tbody>
-  </table>
-
-  <!-- 🔹 Paginación -->
-  {% if total_pages > 1 %}
-  <div class="pagination">
-    {% if page > 1 %}
-      <a href="{{ url_for('reservas.listar_reservas', page=page-1, fecha_inicio=request.args.get('fecha_inicio',''), fecha_fin=request.args.get('fecha_fin','')) }}" class="btn-secondary">⬅️ Anterior</a>
-    {% endif %}
-
-    <span>Página {{ page }} de {{ total_pages }}</span>
-
-    {% if page < total_pages %}
-      <a href="{{ url_for('reservas.listar_reservas', page=page+1, fecha_inicio=request.args.get('fecha_inicio',''), fecha_fin=request.args.get('fecha_fin','')) }}" class="btn-secondary">Siguiente ➡️</a>
+      <span class="page-current">Página {{ page }} de {{ total_pages }}</span>
+      {% if page < total_pages %}
+      <a href="{{ url_for('reservas.listar_reservas', page=page+1, fecha_inicio=request.args.get('fecha_inicio',''), fecha_fin=request.args.get('fecha_fin','')) }}" class="page-link">Siguiente ➡️</a>
+      {% endif %}
+    </div>
     {% endif %}
   </div>
-  {% endif %}
 </div>
 
-<!-- Script para autocompletar -->
+<!-- ===================== SCRIPT ===================== -->
 <script>
-  function setPrecio() {
-    const select = document.getElementById("producto-select");
-    const precio = select.options[select.selectedIndex]?.getAttribute("data-precio");
-    document.getElementById("valor").value = precio || "";
+function setPrecio() {
+  const select = document.getElementById("producto-select");
+  const precio = select.options[select.selectedIndex]?.getAttribute("data-precio");
+  document.getElementById("valor").value = precio || "";
+}
+
+// Autocompletar cliente
+const inputIdentificacion = document.getElementById("identificacion");
+const hiddenIdCliente = document.getElementById("idcliente");
+const msg = document.getElementById("cliente-msg");
+const sugerencias = document.getElementById("sugerencias");
+
+// Si ya viene precargado
+document.addEventListener("DOMContentLoaded", () => {
+  if (hiddenIdCliente.value) {
+    msg.textContent = "✅ Cliente precargado";
+    msg.className = "cliente-msg ok";
   }
+});
 
-  const inputIdentificacion = document.getElementById("identificacion");
-  const hiddenIdCliente = document.getElementById("idcliente");
-  const msg = document.getElementById("cliente-msg");
-  const sugerencias = document.getElementById("sugerencias");
+// Buscar mientras escribe
+inputIdentificacion.addEventListener("input", async function() {
+  const valor = this.value.trim();
+  msg.textContent = "";
+  hiddenIdCliente.value = "";
+  sugerencias.innerHTML = "";
 
-  // Buscar clientes mientras escribe
-  inputIdentificacion.addEventListener("input", async function() {
-    const valor = this.value.trim();
-    msg.textContent = "";
-    hiddenIdCliente.value = "";
+  if (valor.length < 3) return;
+
+  try {
+    const resp = await fetch(`/reservas/clientes?identificacion=${valor}`);
+    const data = await resp.json();
+    if (data.length > 0) {
+      sugerencias.innerHTML = data.map(c => 
+        `<li data-id="${c.idcliente}" data-nombre="${c.nombrecompleto || ''}">
+          <strong>${c.identificacion}</strong> - ${c.nombrecompleto || ''}
+        </li>`).join("");
+    }
+  } catch (err) {
+    console.error("❌ Error buscando clientes:", err);
+  }
+});
+
+// Seleccionar cliente
+sugerencias.addEventListener("click", function(e) {
+  if (e.target.closest("li")) {
+    const li = e.target.closest("li");
+    const id = li.getAttribute("data-id");
+    const nombre = li.getAttribute("data-nombre");
+    const identificacion = li.textContent.split(" - ")[0];
+
+    hiddenIdCliente.value = id;
+    inputIdentificacion.value = `${identificacion} - ${nombre}`;
+    msg.textContent = "✅ Cliente seleccionado: " + nombre;
+    msg.className = "cliente-msg ok";
     sugerencias.innerHTML = "";
+  }
+});
 
-    if (valor.length < 3) return;
-
-    try {
-      const resp = await fetch(`/reservas/clientes?identificacion=${valor}`);
-      const data = await resp.json();
-
-        if (data.length > 0) {
-          sugerencias.innerHTML = data.map(c => 
-            `<li data-id="${c.idcliente}" data-nombre="${c.nombrecompleto || ''}">
-              <strong>${c.identificacion}</strong> - ${c.nombrecompleto || ''}
-            </li>`).join("");
-        }
-    } catch (err) {
-      console.error("❌ Error buscando clientes:", err);
-    }
-  });
-
-  // Seleccionar cliente
-  sugerencias.addEventListener("click", function(e) {
-    if (e.target.closest("li")) {
-      const li = e.target.closest("li");
-      const id = li.getAttribute("data-id");
-      const nombre = li.getAttribute("data-nombre");
-      const identificacion = li.textContent.split(" - ")[0];
-
-      hiddenIdCliente.value = id;
-      inputIdentificacion.value = `${identificacion} - ${nombre}`;
-      msg.textContent = "✅ Cliente seleccionado: " + nombre;
-      msg.className = "cliente-msg ok";
-
-      sugerencias.innerHTML = "";
-    }
-  });
-
-  inputIdentificacion.addEventListener("blur", () => {
-    setTimeout(() => { sugerencias.innerHTML = ""; }, 200);
-  });
+// Ocultar lista al perder foco
+inputIdentificacion.addEventListener("blur", () => {
+  setTimeout(() => { sugerencias.innerHTML = ""; }, 200);
+});
 </script>
 
+<!-- ===================== ESTILOS ===================== -->
+<style>
+.dashboard-container { max-width:1200px; margin:auto; padding:20px; }
+.page-title { text-align:center; font-weight:700; color:#2c3e50; margin-bottom:15px; }
 
+.card { background:#fff; border-radius:12px; padding:25px; margin-top:20px;
+        box-shadow:0 3px 10px rgba(0,0,0,0.05); border:1px solid #e3e6ea; }
+
+.form-row { display:flex; flex-wrap:wrap; gap:20px; margin-bottom:15px; }
+.form-group { flex:1; display:flex; flex-direction:column; }
+.form-group label { font-weight:600; margin-bottom:6px; color:#2c3e50; }
+input, select, textarea { padding:10px; border:1px solid #ccc; border-radius:6px; }
+
+.btn-primary, .btn-success, .btn-secondary {
+  padding:10px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:600;
+  transition:0.25s; text-decoration:none; display:inline-block; text-align:center;
+}
+.btn-primary { background:#007bff; color:#fff; }
+.btn-primary:hover { background:#0056b3; }
+.btn-success { background:#28a745; color:#fff; }
+.btn-success:hover { background:#218838; }
+.btn-secondary { background:#6c757d; color:#fff; }
+.btn-secondary:hover { background:#5a6268; }
+
+.btn-volver { background:#6c757d; color:white; padding:8px 14px; border-radius:6px; text-decoration:none; }
+
+.styled-table { width:100%; border-collapse:separate; border-spacing:0; background:#fff;
+                border-radius:10px; overflow:hidden; font-size:14px; margin-top:10px; }
+.styled-table thead { background:linear-gradient(90deg,#007bff,#0056b3); color:white; }
+.styled-table th, .styled-table td { padding:10px 14px; border-bottom:1px solid #e5e8ef; text-align:left; }
+.styled-table tr:hover { background:#f8faff; }
+
+.badge { padding:4px 8px; border-radius:8px; font-weight:600; color:white; }
+.badge-yellow { background:#f1c40f; color:#333; }
+.badge-green { background:#28a745; }
+.badge-red { background:#e74c3c; }
+
+.cliente-msg { font-size:0.9rem; color:#777; margin-top:4px; }
+.cliente-msg.ok { color:#28a745; font-weight:600; }
+
+.sugerencias-list {
+  position:absolute; top:100%; left:0; right:0;
+  background:white; border:1px solid #ddd; border-radius:6px;
+  list-style:none; padding:0; margin:4px 0 0; max-height:150px;
+  overflow-y:auto; z-index:10;
+}
+.sugerencias-list li { padding:8px; cursor:pointer; }
+.sugerencias-list li:hover { background:#f2f2f2; }
+
+.empty { text-align:center; color:#666; font-style:italic; padding:10px; }
+.pagination { display:flex; justify-content:center; align-items:center; gap:10px; margin-top:15px; }
+.page-link, .page-current { padding:6px 12px; border-radius:6px; border:1px solid #ccc; }
+.page-link:hover { background:#007bff; color:white; border-color:#007bff; }
+.page-current { background:#007bff; color:white; font-weight:bold; }
+</style>
 {% endblock %}
