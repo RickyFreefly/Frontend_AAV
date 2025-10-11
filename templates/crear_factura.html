@@ -4,9 +4,6 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/facturas.css') }}">
 
-<!-- Select2 para búsqueda avanzada -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
 <div class="form-container dark-card">
   <h2 class="section-title">🧾 Crear Factura</h2>
   <a href="{{ url_for('facturas.listar_facturas') }}" class="back-link">⬅️ Volver</a>
@@ -153,7 +150,6 @@
 </div>
 
 <!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 let productos = [];
 let medios = [];
@@ -181,30 +177,47 @@ async function cargarProductosYMedios() {
   }
 }
 
+async function buscarCliente() {
+  const identificacion = document.getElementById("buscarIdentificacion").value;
+  if (!identificacion) return alert("Ingrese identificación");
+  try {
+    const resp = await fetch(`/facturas/buscar_cliente?identificacion=${identificacion}`);
+    if (!resp.ok) throw new Error("Cliente no encontrado");
+    const clientes = await resp.json();
+    if (!clientes.length) throw new Error("Cliente no encontrado");
+    const cliente = clientes[0];
+    document.getElementById("cliente-info").innerHTML =
+      `<p><strong>Nombre:</strong> ${cliente.nombrecompleto}</p><p><strong>Email:</strong> ${cliente.email || 'N/A'}</p>`;
+    document.getElementById("idcliente").value = cliente.idcliente;
+  } catch (err) { alert("Error buscando cliente: " + err.message); }
+}
+
+async function cargarReserva() {
+  const identificacion = document.getElementById("identificacion").value;
+  if (!identificacion) return alert("Ingrese la identificación del cliente");
+  try {
+    const resp = await fetch(`/facturas/buscar_reserva/${identificacion}`);
+    if (!resp.ok) throw new Error("Reserva no encontrada");
+    const reservas = await resp.json();
+    const reserva = reservas[0];
+    if (!reserva) throw new Error("No se encontraron reservas");
+    location.href = `/facturas/crear?idReserva=${reserva.id}`;
+  } catch (err) { alert("Error cargando reserva: " + err.message); }
+}
+
 function addDetalle() {
   const div = document.createElement('div');
   div.classList.add("detalle-row", "form-grid-4");
   div.setAttribute("id", `detalle_${detalleIndex}`);
-
-  // Opciones con código y nombre
   let options = '<option value="">-- Selecciona producto --</option>';
-  productos.forEach(p => options += `<option value="${p.idproducto}" data-precio="${p.precio}">${p.codigo} — ${p.nombre}</option>`);
-
+  productos.forEach(p => options += `<option value="${p.idproducto}" data-precio="${p.precio}">${p.nombre}</option>`);
   div.innerHTML = `
-    <select class="producto-select" name="detalles[${detalleIndex}][idproducto]" onchange="setPrecio(this, ${detalleIndex})" required>${options}</select>
+    <select name="detalles[${detalleIndex}][idproducto]" onchange="setPrecio(this, ${detalleIndex})" required>${options}</select>
     <input type="number" name="detalles[${detalleIndex}][cantidad]" value="1" min="1" oninput="actualizarSubtotal(${detalleIndex})" required>
     <input type="number" step="0.01" name="detalles[${detalleIndex}][valorunitario]" id="valor_${detalleIndex}" oninput="actualizarTotales()" required>
     <button type="button" class="btn-delete" onclick="eliminarDetalle(${detalleIndex})">❌</button>
   `;
   document.getElementById("detalles").appendChild(div);
-
-  // Inicializar Select2 en el nuevo select
-  $(`#detalle_${detalleIndex} .producto-select`).select2({
-    placeholder: 'Buscar producto por código o nombre...',
-    allowClear: true,
-    width: '100%'
-  });
-
   detalleIndex++;
 }
 
