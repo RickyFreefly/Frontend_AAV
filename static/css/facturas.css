@@ -13,7 +13,7 @@ body {
   padding: 20px;
 }
 
-/* Título principal */
+/* ======= TÍTULOS ======= */
 .section-title,
 .page-title {
   font-size: 1.8em;
@@ -26,13 +26,13 @@ body {
   gap: 8px;
 }
 
-/* Cards para secciones */
+/* ======= SECCIONES ======= */
 .card-section {
   margin: 20px 0;
   padding: 20px;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
 }
 
 .form-section-title {
@@ -40,18 +40,18 @@ body {
   font-size: 1.2em;
   font-weight: bold;
   color: #444;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e0e0e0;
   padding-bottom: 5px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* Inputs y botones */
+/* ======= INPUTS Y TEXTAREAS ======= */
 input, select, textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid #c8d3e5;
   border-radius: 8px;
   background: #fff;
   color: #333;
@@ -71,7 +71,7 @@ textarea {
   resize: vertical;
 }
 
-/* Botones */
+/* ======= BOTONES ======= */
 button {
   padding: 10px 16px;
   border: none;
@@ -105,7 +105,7 @@ button {
   background: #d32f2f;
 }
 
-/* Botón volver */
+/* ======= BOTÓN VOLVER ======= */
 .back-link {
   display: inline-block;
   margin-bottom: 15px;
@@ -116,7 +116,7 @@ button {
   text-decoration: underline;
 }
 
-/* Grillas */
+/* ======= GRILLAS ======= */
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -132,87 +132,7 @@ button {
   margin-bottom: 10px;
 }
 
-.form-grid-4 {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 40px;
-  gap: 10px;
-  margin-bottom: 10px;
-  align-items: center;
-}
-
-/* Totales destacados */
-#totalFactura,
-#totalPagado,
-#saldoPendiente {
-  font-size: 1.3em;
-  font-weight: bold;
-  text-align: right;
-  padding: 10px;
-  border-radius: 6px;
-}
-
-#totalFactura { color: #007bff; }
-#totalPagado { color: #28a745; }
-#saldoPendiente.ok { color: #28a745; }
-#saldoPendiente.error { color: #dc3545; }
-
-.saldo-warning {
-  margin-top: 10px;
-  font-weight: bold;
-  color: #dc3545;
-  text-align: center;
-}
-
-/* Totales en cards */
-.totales-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.total-card {
-  padding: 15px;
-  border-radius: 10px;
-  color: #fff;
-  text-align: center;
-  font-size: 1.1em;
-  font-weight: bold;
-}
-
-.total-card h4 {
-  margin: 0 0 8px 0;
-  font-size: 1em;
-}
-.total-card p {
-  font-size: 1.4em;
-  margin: 0;
-}
-
-.azul { background: #007bff; }
-.verde { background: #28a745; }
-.rojo { background: #dc3545; }
-
-/* Botón de eliminar pequeño */
-.btn-delete {
-  background: #f44336;
-  border: none;
-  color: #fff;
-  font-size: 1em;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease;
-}
-.btn-delete:hover {
-  background: #d32f2f;
-}
-
-/* Botones de modo */
+/* ======= MODO DE CREACIÓN ======= */
 .mode-switch {
   display: flex;
   justify-content: center;
@@ -249,7 +169,92 @@ button {
   background: #e0ecff;
 }
 
-/* ======== TOTALES FACTURA ======== */
+/* ======= DETALLES DE FACTURA ======= */
+.detalle-row {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr 0.7fr 1fr 40px;
+  gap: 10px;
+  align-items: center;
+  background: #f9fbff;
+  border: 1px solid #dee6f5;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.detalle-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.07);
+}
+
+.search-wrapper {
+  position: relative;
+}
+.search-wrapper input {
+  padding-left: 28px;
+}
+.search-wrapper .icon {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Inputs internos del detalle */
+.detalle-row input[type="text"],
+.detalle-row select,
+.detalle-row input[type="number"] {
+  border-radius: 8px;
+  border: 1px solid #c5d2f2;
+  padding: 8px 10px;
+  background: #fff;
+}
+
+.detalle-row input[type="text"]:focus,
+.detalle-row select:focus,
+.detalle-row input[type="number"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.15);
+}
+
+/* Botón eliminar (detalle y pagos) */
+.btn-delete {
+  background: #ef4444;
+  border: none;
+  color: white;
+  font-size: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+.btn-delete:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+/* ======= PAGOS ======= */
+.pago-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 40px;
+  gap: 10px;
+  align-items: center;
+  background: #f9fbff;
+  border: 1px solid #dee6f5;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* ======= TOTALES ======= */
 .totales-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -264,7 +269,11 @@ button {
   font-weight: bold;
   font-size: 1.1em;
   color: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease;
+}
+.total-card:hover {
+  transform: translateY(-2px);
 }
 
 .total-card h4 {
@@ -272,22 +281,25 @@ button {
   font-size: 1em;
   font-weight: 600;
 }
-
 .total-card p {
   margin: 0;
   font-size: 1.4em;
 }
 
-/* Colores por tipo */
-#totalFactura {
-  background: #007bff;   /* Azul */
-}
-#totalPagado {
-  background: #28a745;   /* Verde */
-}
-#saldoPendiente.ok {
-  background: #28a745;   /* Verde cuando está pagado */
-}
-#saldoPendiente.error {
-  background: #dc3545;   /* Rojo cuando hay saldo pendiente */
+/* Colores de cards */
+.azul { background: #007bff; }
+.verde { background: #28a745; }
+.rojo { background: #dc3545; }
+
+#totalFactura { color: #fff; background: #007bff; }
+#totalPagado { color: #fff; background: #28a745; }
+#saldoPendiente.ok { color: #fff; background: #28a745; }
+#saldoPendiente.error { color: #fff; background: #dc3545; }
+
+/* ======= ADVERTENCIA SALDO ======= */
+.saldo-warning {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #dc3545;
+  text-align: center;
 }
