@@ -47,7 +47,7 @@ def crear_egreso():
         "metodopago": request.form["metodopago"],
         "observacion": request.form.get("observacion", ""),
         "estado": "PAGADO",  # Estado fijo
-        "idusuario": 1  # ⚙️ Ajustar si tienes session["idusuario"]
+        "idusuario": 5  # ⚙️ Ajustar si tienes session["idusuario"]
     }
 
     try:
